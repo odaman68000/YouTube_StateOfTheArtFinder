@@ -11,7 +11,7 @@
 #import "DetailViewController.h"
 
 @interface MasterViewController ()
-@property (nonatomic, strong) NSArray *videos;
+@property (strong, nonatomic) NSArray *videos;
 @end
 
 @implementation MasterViewController
