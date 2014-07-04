@@ -10,26 +10,14 @@
 
 #import "DetailViewController.h"
 
-@interface MasterViewController () {
-	NSArray *videos;
-}
+@interface MasterViewController ()
+@property (strong, nonatomic) NSArray *videos;
 @end
 
 @implementation MasterViewController
-- (void)awakeFromNib {
-	[super awakeFromNib];
-}
-
 - (void)viewDidLoad {
 	[super viewDidLoad];
 	[self setSearchKey:@"amiga state of the art"];
-}
-
-- (void)didReceiveMemoryWarning {
-	[super didReceiveMemoryWarning];
-}
-
-- (void)insertNewObject:(id)sender {
 }
 
 #pragma mark - Table View
@@ -39,15 +27,15 @@
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-	return videos.count;
+	return self.videos.count;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
 	dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-		NSString *title = videos[indexPath.row][@"media$group"][@"media$title"][@"$t"];
-		NSString *detail = [NSString stringWithFormat:@"%@ sec", videos[indexPath.row][@"media$group"][@"yt$duration"][@"seconds"]];
-		NSString *thumbnail = videos[indexPath.row][@"media$group"][@"media$thumbnail"][1][@"url"];
+		NSString *title = self.videos[indexPath.row][@"media$group"][@"media$title"][@"$t"];
+		NSString *detail = [NSString stringWithFormat:@"%@ sec", self.videos[indexPath.row][@"media$group"][@"yt$duration"][@"seconds"]];
+		NSString *thumbnail = self.videos[indexPath.row][@"media$group"][@"media$thumbnail"][1][@"url"];
 		UIActivityIndicatorView *indicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
 		indicatorView.hidesWhenStopped = YES;
 		dispatch_async(dispatch_get_main_queue(), ^{
@@ -72,14 +60,11 @@
     return YES;
 }
 
-- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
-}
-
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
     if (![[segue identifier] isEqualToString:@"showDetail"])
 		return;
 	NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
-	NSString *videoUrlStr = videos[indexPath.row][@"media$group"][@"media$player"][0][@"url"];
+	NSString *videoUrlStr = self.videos[indexPath.row][@"media$group"][@"media$player"][0][@"url"];
 	NSURL *url = [NSURL URLWithString:videoUrlStr];
 	NSURLRequest *request = [NSURLRequest requestWithURL:url];
 	[[segue destinationViewController] setDetailItem:request];
@@ -95,7 +80,7 @@
 	[NSURLConnection sendAsynchronousRequest:request queue:opQueue completionHandler:^(NSURLResponse *responce, NSData *data, NSError *error) {
 		NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
 		NSLog(@"%@", json);
-		videos = json[@"feed"][@"entry"];
+		self.videos = json[@"feed"][@"entry"];
 		[self.tableView reloadData];
 	}];
 }
