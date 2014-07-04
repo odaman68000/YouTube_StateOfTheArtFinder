@@ -24,18 +24,12 @@
 }
 
 - (void)configureView {
-	if (self.detailItem) {
+	if (self.detailItem)
 		[self.webView loadRequest:self.detailItem];
-	}
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
 	[self configureView];
 }
-
-- (void)didReceiveMemoryWarning {
-    [super didReceiveMemoryWarning];
-}
-
 @end
